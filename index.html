@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Flows on a Torus</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<link type="text/css" rel="stylesheet" href="main.css">
+	</head>
+	<body>
+        <div id = "control-panel">
+			<div class="sub-panel">
+				<input type="range" name="opacity" id="opacity" min="0" max="1" step="0.01">
+				<label for="opacity">Torus Opacity</label>
+			</div>
+			<button id="toggle-mesh">Toggle Mesh</button>
+			<div class="sub-panel">
+				<input id="toggle-axes" type="checkbox" name="axes-toggle" checked>
+				<label for="axes-toggle">Toggle Axes</label>
+			</div>
+			<hr class="sub-div"/>
+			<div class="sub-panel">
+				<input id="trajectory-distance" type="range" name="trajectory-distance" min="100" max="10000" step="10">
+				<label for="trajectory-distance">Trajectory Distance</label>
+			</div>
+			<div class="sub-panel">
+				<input id="p" type="range" name="p" min="0" max="20" step="1" value="2">
+				<label for="p">p</label>
+			</div>
+			<div class="sub-panel">
+				<input id="q" type="range" name="q" min="0" max="20" step="1" value="3">
+				<label for="q">q</label>
+			</div>
+			<button id="draw-trajectory" >Draw Trajectory</button>
+		</div>
+
+        </div>
+            <script type="module" src="/main.js"></script>
+	</body>
+</html>

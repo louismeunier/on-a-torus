@@ -1,0 +1,69 @@
+body {
+	margin: 0;
+	/* background-color: #000; */
+	background-color: #eae2d7;
+	color: gray;
+	font-family: Monospace;
+	font-size: 13px;
+	line-height: 24px;
+	overscroll-behavior: none;
+}
+
+
+a:hover {
+	text-decoration: underline;
+}
+
+#info {
+	position: absolute;
+	top: 0px;
+	width: 100%;
+	padding: 10px;
+	box-sizing: border-box;
+	text-align: center;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	pointer-events: none;
+	z-index: 1; /* TODO Solve this in HTML */
+}
+
+a, button, input, select {
+	pointer-events: auto;
+}
+
+
+
+#control-panel {
+    position:absolute;
+    bottom: 0;
+	outline: 2px dashed gray;
+	display: grid;
+	gap: 1em;
+	padding: 1em;
+}
+
+canvas {
+	/* background-color: #eae2d7; */
+}
+
+button {
+	width: 50%;
+	border: 2px solid black;
+	border-radius: .5em;
+	color: gray
+}
+
+.sub-panel {
+	display: grid;
+	grid-auto-flow: column;
+	align-items: center;
+	gap: 1em;
+}
+
+.sub-div {
+	width: 100%;
+	color: transparent;
+	border-bottom: dashed 2px gray
+}
