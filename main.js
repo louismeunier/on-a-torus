@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { torusCoordsToCartesian, sleep } from './utils';
 
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { linspace, torus_function } from './mathing';
+import { distanceThreeD, linspace, torus_function } from './mathing';
 
 // import Stats from 'three/addons/libs/stats.module.js';
 
@@ -10,7 +10,7 @@ import { linspace, torus_function } from './mathing';
 let camera, scene, renderer, stats;
 // store trajectories
 let trajectoryDrawn = false;
-let trajectoryDistance = 500;
+let trajectoryDistance = 1000;
 let p = 2,
 q = 3
 const spheres = [],
@@ -121,11 +121,13 @@ function init() {
 
     document.getElementById("p").addEventListener("change", e => {
         p = e.target.value;
-        points.length=0
+        document.getElementById("p-lab").innerText = `p (${p})`
+        points.length=0;
     })
     document.getElementById("q").addEventListener("change", e => {
         q = e.target.value;
-        points.length=0
+        document.getElementById("q-lab").innerText = `q (${q})`
+        points.length=0;
     })
 }
 
@@ -151,7 +153,7 @@ async function drawTrajectory() {
         return
     }
 
-    
+
     lockPanel(true)
 
     if (
@@ -167,6 +169,7 @@ async function drawTrajectory() {
 
         // Initial condition
         const [a0,b0] = [Math.PI/2, Math.PI]
+        const [x0, y0, z0] = torusCoordsToCartesian(a0, b0, TORUS_CENTRAL_RADIUS, TORUS_TUBE_RADIUS)
         let [an, bn] = [a0, b0];
 
         for (let i = 0; i < trajectoryDistance; i++) {
@@ -177,6 +180,10 @@ async function drawTrajectory() {
             const [x,y,z] = torusCoordsToCartesian(an, bn, TORUS_CENTRAL_RADIUS, TORUS_TUBE_RADIUS);
 
             points.push(new THREE.Vector3(x,y,z))
+
+            if (distanceThreeD(x, y, z, x0, y0, z0) < 0.2) {
+                return
+            }
             
             // point
             const sphere = new THREE.Mesh( pointGeometry, pointMaterial ); 
