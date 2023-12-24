@@ -1,5 +1,13 @@
 {
   "dependencies": {
     "three": "^0.159.0"
+  },
+  "devDependencies": {
+    "vite": "5.0.10"
+  },
+  "scripts": {
+    "start": "npx vite",
+    "build": "npx vite build",
+    "serve": "serve dist"
   }
 }
