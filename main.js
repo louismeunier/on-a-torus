@@ -102,7 +102,7 @@ function init() {
     // TODO add axes and such
 
     // ? init listeners
-    document.getElementById("opacity").addEventListener("change", e => {
+    document.getElementById("opacity").addEventListener("input", e => {
         torusObject.material.opacity = e.target.value
     })
     document.getElementById("toggle-mesh").addEventListener("click", e => {
@@ -115,12 +115,12 @@ function init() {
     })
 
     document.getElementById("draw-trajectory").addEventListener("click", drawTorusTrajectory)
-    document.getElementById("trajectory-distance").addEventListener("change", e => {
+    document.getElementById("trajectory-distance").addEventListener("input", e => {
         trajectoryDistance = e.target.value;
         document.getElementById("trajectory-distance-lab").innerText = `Distance (${trajectoryDistance})`;
     })
 
-    document.getElementById("trajectory-grain").addEventListener("change", e => {
+    document.getElementById("trajectory-grain").addEventListener("input", e => {
         trajectoryGrain = e.target.value;
         document.getElementById("trajectory-grain-lab").innerText = `Grain (${trajectoryGrain})`;
     })
@@ -138,14 +138,14 @@ function init() {
     initSphere.position.set(x0, y0, z0);
     scene.add( initSphere );
 
-    document.getElementById("ivp-1").addEventListener("change", e => {
+    document.getElementById("ivp-1").addEventListener("input", e => {
         ai = parseFloat(e.target.value);
         const [x0, y0, z0] = torusCoordsToCartesian(ai, bi, TORUS_CENTRAL_RADIUS, TORUS_TUBE_RADIUS);
         initSphere.position.set(x0, y0, z0);
         clearSquareMap();
         initialValueSquareMap();
     })
-    document.getElementById("ivp-2").addEventListener("change", e => {
+    document.getElementById("ivp-2").addEventListener("input", e => {
         bi = parseFloat(e.target.value);
         const [x0, y0, z0] = torusCoordsToCartesian(ai, bi, TORUS_CENTRAL_RADIUS, TORUS_TUBE_RADIUS);
         initSphere.position.set(x0, y0, z0);
@@ -155,12 +155,12 @@ function init() {
 
     // TODO: change all this to work more generally for arbitrary arguments
     // TODO: probably easiest to just have a big array of arguments rather than individually named ones; just listen to all inputs in each parameter panel
-    document.getElementById("p").addEventListener("change", e => {
+    document.getElementById("p").addEventListener("input", e => {
         p = e.target.value;
         document.getElementById("p-lab").innerText = `p (${p})`
         points.length=0;
     })
-    document.getElementById("q").addEventListener("change", e => {
+    document.getElementById("q").addEventListener("input", e => {
         q = e.target.value;
         document.getElementById("q-lab").innerText = `q (${q})`
         points.length=0;
