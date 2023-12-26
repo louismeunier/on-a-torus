@@ -37,7 +37,14 @@
 			</div>
 			<div class="sub-panel">
 				<input type="checkbox" name="show-points" id="show-points" checked/>
-				<label for="show-points">Show Computed Points</label>
+				<label for="show-points">Show Points</label>
+			</div>
+			<div class="sub-panel">
+				<div class="ivp">
+					<span>$\theta_0^a=$</span><input id="ivp-1" type="number" min="0" max="6.26" step="0.01" value="3.14">
+					<span>$\theta_0^b=$</span><input id="ivp-2" type="number" min="0" max="6.26" step="0.01" value="3.14">
+				</div>
+				<span for="ivp">Initial</span>
 			</div>
 			<hr class="sub-div"/>
 			<span class="sub-panel-title">Parameters</span>
@@ -71,6 +78,9 @@
 		</div>
 		<!-- Options panel -->
 		<div id="options-panel" class="primary-panel">
+			<p>
+				$\begin{pmatrix}\dot{\theta}_a\\\dot{\theta}_b\end{pmatrix} = \begin{pmatrix} p\\ q \end{pmatrix}$
+			</p>
 			<div><select id="option-select" value="knot">
 				<option value="knot">p:q ((p,q)-torus knot) dynamics</option>
 				<option value="quasi">quasiperiodic (irrational slope) dynamics</option>
@@ -86,4 +96,13 @@
         </div>
             <script type="module" src="/main.js"></script>
 	</body>
+	<script>
+		MathJax = {
+		  tex: {
+			inlineMath: [['$', '$'], ['\\(', '\\)']]
+		  }
+		};
+	</script>
+	<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+	</script>
 </html>

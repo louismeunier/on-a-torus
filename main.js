@@ -1,9 +1,9 @@
 import * as THREE from 'three';
-import { MeshLine, MeshLineMaterial, MeshLineRaycast } from 'three.meshline';
 import { torusCoordsToCartesian, sleep, roundObject, regularizeCoordinate, lockPanel } from './utils';
 
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { distanceThreeD, linspace, torus_function } from './mathing';
+
 
 // import Stats from 'three/addons/libs/stats.module.js';
 
@@ -19,6 +19,7 @@ let trajectoryGrain = 0.05;
 
 let showAxes = false;
 let showPoints = true;
+let [ai, bi] = [Math.PI, Math.PI]
 
 
 let p = 2,
@@ -64,10 +65,8 @@ function init() {
     scene.add( camera );
 
     var material = new THREE.MeshPhongMaterial({
-        ambient: 0x000000,
         specular: 0x999999,
         shininess: 7,
-        shading: THREE.SmoothShading,
         opacity: 0.95,
         transparent: true});
       
@@ -128,6 +127,13 @@ function init() {
 
     document.getElementById("show-points").addEventListener("change", e => {
         showPoints = e.target.checked;
+    })
+
+    document.getElementById("ivp-1").addEventListener("change", e => {
+        ai = parseFloat(e.target.value);
+    })
+    document.getElementById("ivp-2").addEventListener("change", e => {
+        bi = parseFloat(e.target.value);
     })
 
     // TODO: change all this to work more generally for arbitrary arguments
@@ -223,8 +229,7 @@ async function drawTorusTrajectory() {
         document.getElementById("draw-trajectory").innerText = "꩜ Drawing Trajectory"
 
         // Initial condition
-        let [a0,b0] = [Math.PI+0.1, Math.PI];
-        const ai = a0, bi = b0;
+        let [a0,b0] = [ai, bi];
         const [x0, y0, z0] = torusCoordsToCartesian(a0, b0, TORUS_CENTRAL_RADIUS, TORUS_TUBE_RADIUS)
         points.push(new THREE.Vector3(x0, y0, z0))
         let [an, bn] = [a0, b0];
@@ -268,7 +273,7 @@ async function drawTorusTrajectory() {
             b0 = bn;
              // ! Stop once the system loops back on itself (sketchy)
              console.log(distanceThreeD(x, y, z, x0, y0, z0))
-             if (distanceThreeD(x, y, z, x0, y0, z0) < 50*trajectoryGrain) {
+             if (distanceThreeD(x, y, z, x0, y0, z0) < 60*trajectoryGrain) {
                  lockPanel(false)
                  trajectoryDrawn = true;
                  document.getElementById("draw-trajectory").innerText = "╳ Clear Trajectory"

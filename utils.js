@@ -59,11 +59,13 @@ export function regularizeCoordinate(canvas_width, canvas_height, x, y) {
  * @param {boolean} lock 
  */
 export function lockPanel(lock) {
-    document.getElementById("draw-trajectory").disabled = lock
-    document.getElementById("q").disabled = lock
-    document.getElementById("p").disabled = lock
-    document.getElementById("trajectory-distance").disabled = lock
-    document.getElementById("trajectory-grain").disabled = lock
-    document.getElementById("option-select").disabled = lock
-    document.getElementById("show-points").disabled = lock
+    document.getElementById("draw-trajectory").disabled = lock;
+    document.getElementById("q").disabled = lock;
+    document.getElementById("p").disabled = lock;
+    document.getElementById("trajectory-distance").disabled = lock;
+    document.getElementById("trajectory-grain").disabled = lock;
+    document.getElementById("option-select").disabled = lock;
+    document.getElementById("show-points").disabled = lock;
+    document.getElementById("ivp-1").disabled = lock;
+    document.getElementById("ivp-2").disabled = lock;
 }
