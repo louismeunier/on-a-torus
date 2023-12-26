@@ -13,27 +13,34 @@
 		</div>
 		<!-- Control panel, changes dynamically with different options -->
         <div id = "control-panel" class="primary-panel">
+			<span class="sub-panel-title">Display Settings</span>
 			<div class="sub-panel">
-				<input type="range" name="opacity" id="opacity" min="0" max="1" step="0.01" value="1">
+				<input type="range" name="opacity" id="opacity" min="0" max="1" step="0.01" value="0.95">
 				<label for="opacity">Torus Opacity</label>
 			</div>
-			<button id="toggle-mesh">𐄳 Toggle Mesh</button>
-			<div class="sub-panel">
+			<div class="sub-panel together">
+				<button id="toggle-mesh">𐄳 Toggle Mesh</button>
 				<button id="toggle-axes" >
 					ヿ Toggle Axes
 				</button>
 			</div>
+			
 			<hr class="sub-div"/>
+			<span class="sub-panel-title">Computation Settings</span>
 			<div class="sub-panel">
 				<input id="trajectory-distance" type="range" name="trajectory-distance" min="100" max="10000" step="10" value="5000">
-				<label id="trajectory-distance-lab" class="info-label" title="How many points are computed and plotted" for="trajectory-distance">Trajectory Distance (5000)</label>
+				<label id="trajectory-distance-lab" class="info-label" title="The maximum number of points that are computed. Note that for periodic solutions, the system will stop well before this cutoff if it appears a cycle has closed." for="trajectory-distance">Distance (5000)</label>
 			</div>
 			<div class="sub-panel">
 				<input id="trajectory-grain" type="range" name="trajectory-grain" min=".001" max=".1" step="0.001" value=".05">
-				<label id="trajectory-grain-lab" class="info-label" title="Distance between points on a trajectory. Decrease this to increase accuracy; if you see a lot of clipping through the torus, consider lowering this." for="trajectory-grain">Trajectory Grain (0.05)</label>
+				<label id="trajectory-grain-lab" class="info-label" title="Distance between points on a trajectory. Decrease this to increase accuracy; if you see a lot of clipping through the torus, consider lowering this." for="trajectory-grain">Grain (0.05)</label>
+			</div>
+			<div class="sub-panel">
+				<input type="checkbox" name="show-points" id="show-points" checked/>
+				<label for="show-points">Show Computed Points</label>
 			</div>
 			<hr class="sub-div"/>
-			<span>Parameters</span>
+			<span class="sub-panel-title">Parameters</span>
 			<!-- ! Knot controls -->
 			<div class="knot-pp parameters-panel">
 				<div class="sub-panel">

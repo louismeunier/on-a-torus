@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { MeshLine, MeshLineMaterial, MeshLineRaycast } from 'three.meshline';
-import { torusCoordsToCartesian, sleep, roundObject, regularizeCoordinate } from './utils';
+import { torusCoordsToCartesian, sleep, roundObject, regularizeCoordinate, lockPanel } from './utils';
 
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { distanceThreeD, linspace, torus_function } from './mathing';
@@ -10,6 +10,7 @@ import { distanceThreeD, linspace, torus_function } from './mathing';
 
 let camera, scene, renderer, stats;
 
+// ! Options
 let trajectoryDrawn = false;
 // ? how many points are plotted for a given trajectory
 let trajectoryDistance = 5000;
@@ -17,9 +18,13 @@ let trajectoryDistance = 5000;
 let trajectoryGrain = 0.05;
 
 let showAxes = false;
+let showPoints = true;
+
 
 let p = 2,
 q = 3;
+
+
 const spheres = [],
     points = [],
     lines = [];
@@ -93,10 +98,9 @@ function init() {
     // scene.add( axesHelper );
     
     // ? init canvas
-    const canvas = document.getElementById("square-map");
-    const ctx = canvas.getContext("2d");
-
-    // add axes and such
+    // const canvas = document.getElementById("square-map");
+    // const ctx = canvas.getContext("2d");
+    // TODO add axes and such
 
     // ? init listeners
     document.getElementById("opacity").addEventListener("change", e => {
@@ -114,12 +118,16 @@ function init() {
     document.getElementById("draw-trajectory").addEventListener("click", drawTorusTrajectory)
     document.getElementById("trajectory-distance").addEventListener("change", e => {
         trajectoryDistance = e.target.value;
-        document.getElementById("trajectory-distance-lab").innerText = `Trajectory Distance (${trajectoryDistance})`;
+        document.getElementById("trajectory-distance-lab").innerText = `Distance (${trajectoryDistance})`;
     })
 
     document.getElementById("trajectory-grain").addEventListener("change", e => {
         trajectoryGrain = e.target.value;
-        document.getElementById("trajectory-grain-lab").innerText = `Trajectory Grain (${trajectoryGrain})`;
+        document.getElementById("trajectory-grain-lab").innerText = `Grain (${trajectoryGrain})`;
+    })
+
+    document.getElementById("show-points").addEventListener("change", e => {
+        showPoints = e.target.checked;
     })
 
     // TODO: change all this to work more generally for arbitrary arguments
@@ -154,15 +162,6 @@ function initListeners() {
     const options = document.querySelectorAll(".parameters-panel input")
 }
 
-// ? Toggles usability of controls to avoid parameters changing while trajectories drawn
-function lockPanel(lock) {
-    document.getElementById("draw-trajectory").disabled = lock
-    document.getElementById("q").disabled = lock
-    document.getElementById("p").disabled = lock
-    document.getElementById("trajectory-distance").disabled = lock
-    document.getElementById("trajectory-grain").disabled = lock
-    document.getElementById("option-select").disabled = lock
-}
 
 var cylinderMesh = function( pointX, pointY )
 {
@@ -252,10 +251,12 @@ async function drawTorusTrajectory() {
 
             points.push(new THREE.Vector3(x, y, z))            
             // point
-            const sphere = new THREE.Mesh( pointGeometry, pointMaterial('black') ); 
-            sphere.position.set(x,y,z)
-            // scene.add(sphere);
-            spheres.push(sphere)
+            if (showPoints) {
+                const sphere = new THREE.Mesh( pointGeometry, pointMaterial('black') ); 
+                sphere.position.set(x,y,z)
+                scene.add(sphere);
+                spheres.push(sphere)
+            }
 
             drawSquareMap(a0%(2*Math.PI), b0%(2*Math.PI), an%(2*Math.PI), bn%(2*Math.PI))
 
