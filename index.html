@@ -9,7 +9,7 @@
 	<body>
 		<div class="square-map-container">
 			<canvas id="square-map"></canvas>
-			<i>Unit Square Map</i>
+			<i class="info-label" title='Consider this as an "unwrapping" of the surface of the torus; trajectories can flow off the edge, to come back in appropriate location on the other side. More aptly, consider this as modding the value of each coordinate by 2π.'>Unit Square Map</i>
 		</div>
 		<!-- Control panel, changes dynamically with different options -->
         <div id = "control-panel" class="primary-panel">
@@ -109,6 +109,16 @@
 			<p style="display: none;">
 				Now in the case that $p, q$ are rationally <em>in</em>dependent, then flows on the torus will be <em>quasiperiodic</em>; never quite completing an orbit, but getting "close". These systems form dense orbits on the surface of the torus.
 			</p>
+			<p>Resources used:
+				<ul>
+					<li><a href="https://en.wikipedia.org/wiki/Linear_flow_on_the_torus">Linear flow on the torus (Wikipedia)</a></li>
+					<li><a href="https://en.wikipedia.org/wiki/Torus_knot">Torus knot (Wikipedia)</a></li>
+					<li><a href="https://en.wikipedia.org/wiki/Rational_dependence">Rational dependence (Wikipedia)</a></li>
+					<li><a href="https://www.stevenstrogatz.com/books/nonlinear-dynamics-and-chaos-with-applications-to-physics-biology-chemistry-and-engineering">Strogatz's Nonlinear Dynamics and Chaos</a> <em>(See pg. 276, eg)</em></li>
+					<li><a href="ttps://link.springer.com/book/10.1007/978-1-4612-4426-4">Hale's Dynamics and Bifurcations</a> <em>(See Chapter 6)</em></li>
+				</ul>
+			</p>
+
 			<div style="display:none;">
 			<div><select id="option-select" value="knot">
 				<option value="knot">p:q ((p,q)-torus knot) dynamics</option>

@@ -97,8 +97,8 @@ function init() {
     // scene.add( axesHelper );
     
     // ? init canvas
-    // const canvas = document.getElementById("square-map");
-    // const ctx = canvas.getContext("2d");
+    initCanvas();
+
     // TODO add axes and such
 
     // ? init listeners
@@ -137,9 +137,6 @@ function init() {
     );
     initSphere.position.set(x0, y0, z0);
     scene.add( initSphere );
-
-    // on square map as well
-    initialValueSquareMap();
 
     document.getElementById("ivp-1").addEventListener("change", e => {
         ai = parseFloat(e.target.value);
@@ -188,6 +185,25 @@ function initListeners() {
     const options = document.querySelectorAll(".parameters-panel input")
 }
 
+function initCanvas() {
+    const canvas = document.getElementById("square-map");
+    const ctx = canvas.getContext("2d");
+    ctx.beginPath();
+    canvas_arrow(ctx, 0, canvas.height/2, 0, canvas.height/2-0.1)
+    ctx.stroke()
+    ctx.beginPath();
+    canvas_arrow(ctx, canvas.width, canvas.height/2, canvas.width, canvas.height/2-0.1)
+    ctx.stroke()
+    ctx.beginPath();
+    canvas_arrow(ctx, canvas.width/2, 0, canvas.width/2+0.1, 0)
+    ctx.stroke()
+    ctx.beginPath();
+    canvas_arrow(ctx, canvas.width/2, canvas.height, canvas.width/2+0.1, canvas.height)
+    ctx.stroke()
+
+    // on square map as well
+    initialValueSquareMap();
+}
 
 var cylinderMesh = function( pointX, pointY )
 {
@@ -226,6 +242,8 @@ async function drawTorusTrajectory() {
         }
         trajectoryDrawn = false;
         clearSquareMap();
+        initCanvas();
+        // initialValueSquareMap();
         document.getElementById("draw-trajectory").innerText = "꩜ Draw Trajectory";
         return;
     }
@@ -329,15 +347,18 @@ async function drawTorusTrajectory() {
 
 
 function canvas_arrow(context, fromx, fromy, tox, toy) {
-    var headlen = 4; // length of head in pixels
+    context.strokeStyle="#808080";
+    var headlen = 10; // length of head in pixels
     var dx = tox - fromx;
     var dy = toy - fromy;
     var angle = Math.atan2(dy, dx);
+    // context.beginPath();
     context.moveTo(fromx, fromy);
     context.lineTo(tox, toy);
-    context.lineTo(tox - headlen * Math.cos(angle - Math.PI / 6), toy - headlen * Math.sin(angle - Math.PI / 6));
+    context.lineTo(tox - headlen * Math.cos(angle - Math.PI / 7), toy - headlen * Math.sin(angle - Math.PI / 7));
     context.moveTo(tox, toy);
-    context.lineTo(tox - headlen * Math.cos(angle + Math.PI / 6), toy - headlen * Math.sin(angle + Math.PI / 6));
+    context.lineTo(tox - headlen * Math.cos(angle + Math.PI / 7), toy - headlen * Math.sin(angle + Math.PI / 7));
+    // context.stroke();
 }
 
 // ? Square map
@@ -367,9 +388,11 @@ function initialValueSquareMap() {
     const [ai_reg, bi_reg] = regularizeCoordinate(canvas.width, canvas.height, ai, bi);
     ctx.fillStyle="red";
     ctx.strokeStyle="red";
+    ctx.beginPath();
     ctx.fillRect(ai_reg-1, bi_reg-1, 4, 2);
     ctx.stroke();
     ctx.strokeStyle="black";
+    ctx.fillStyle="black";
 }
 
 function onWindowResize() {
