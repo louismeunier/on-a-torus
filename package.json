@@ -1,6 +1,7 @@
 {
   "dependencies": {
-    "three": "^0.159.0"
+    "three": "^0.159.0",
+    "three.meshline": "^1.4.0"
   },
   "devDependencies": {
     "vite": "5.0.10"

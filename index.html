@@ -7,32 +7,75 @@
 		<link type="text/css" rel="stylesheet" href="main.css">
 	</head>
 	<body>
-        <div id = "control-panel">
+		<div class="square-map-container">
+			<canvas id="square-map"></canvas>
+			<i>Unit Square Map</i>
+		</div>
+		<!-- Control panel, changes dynamically with different options -->
+        <div id = "control-panel" class="primary-panel">
 			<div class="sub-panel">
-				<input type="range" name="opacity" id="opacity" min="0" max="1" step="0.01">
+				<input type="range" name="opacity" id="opacity" min="0" max="1" step="0.01" value="1">
 				<label for="opacity">Torus Opacity</label>
 			</div>
-			<button id="toggle-mesh">Toggle Mesh</button>
+			<button id="toggle-mesh">𐄳 Toggle Mesh</button>
 			<div class="sub-panel">
-				<input id="toggle-axes" type="checkbox" name="axes-toggle" checked>
-				<label for="axes-toggle">Toggle Axes</label>
+				<button id="toggle-axes" >
+					ヿ Toggle Axes
+				</button>
 			</div>
 			<hr class="sub-div"/>
 			<div class="sub-panel">
-				<input id="trajectory-distance" type="range" name="trajectory-distance" min="100" max="10000" step="10" value="1000">
-				<label for="trajectory-distance">Trajectory Distance</label>
+				<input id="trajectory-distance" type="range" name="trajectory-distance" min="100" max="10000" step="10" value="5000">
+				<label id="trajectory-distance-lab" class="info-label" title="How many points are computed and plotted" for="trajectory-distance">Trajectory Distance (5000)</label>
 			</div>
 			<div class="sub-panel">
-				<input id="p" type="range" name="p" min="0" max="20" step="1" value="2">
-				<label for="p" id="p-lab">p (2)</label>
+				<input id="trajectory-grain" type="range" name="trajectory-grain" min=".001" max=".1" step="0.001" value=".05">
+				<label id="trajectory-grain-lab" class="info-label" title="Distance between points on a trajectory. Decrease this to increase accuracy; if you see a lot of clipping through the torus, consider lowering this." for="trajectory-grain">Trajectory Grain (0.05)</label>
 			</div>
-			<div class="sub-panel">
-				<input id="q" type="range" name="q" min="0" max="20" step="1" value="3">
-				<label for="q" id="q-lab">q (3)</label>
+			<hr class="sub-div"/>
+			<span>Parameters</span>
+			<!-- ! Knot controls -->
+			<div class="knot-pp parameters-panel">
+				<div class="sub-panel">
+					<input class="knot-parameter" id="p" type="range" name="p" min="0" max="20" step="1" value="2">
+					<label for="p" id="p-lab">p (2)</label>
+				</div>
+				<div class="sub-panel">
+					<input class="knot-parameter" id="q" type="range" name="q" min="0" max="20" step="1" value="3">
+					<label for="q" id="q-lab">q (3)</label>
+				</div>
 			</div>
-			<button id="draw-trajectory" >Draw Trajectory</button>
+			<!-- ! Quasi controls -->
+			<div class="quasi-pp parameters-panel" style="display: none;">
+				<div class="sub-panel">
+					<select class="quasi-parameter" id="p" type="range" name="p" value="e">
+						<option value="e">e</option>
+						<option value="pi">pi</option>
+					</select>
+					<label for="p" id="p-lab">p (2)</label>
+				</div>
+				<div class="sub-panel">
+					<input class="quasi-parameter" id="q" type="range" name="q" min="0" max="20" step="1" value="3">
+					<label for="q" id="q-lab">q (3)</label>
+				</div>
+			</div>
+			<hr class="sub-div"/>
+			<button id="draw-trajectory">꩜ Draw Trajectory</button>
 		</div>
-
+		<!-- Options panel -->
+		<div id="options-panel" class="primary-panel">
+			<div><select id="option-select" value="knot">
+				<option value="knot">p:q ((p,q)-torus knot) dynamics</option>
+				<option value="quasi">quasiperiodic (irrational slope) dynamics</option>
+				<option value="coupled">coupled dynamics</option>
+				<option value="forced">forced oscillator</option>
+			</select>
+			<label for="dynamics-option">System to plot</label>
+			<!-- <object data="control.html">  -->
+			<!-- </object> -->
+			
+		</div>
+		</div>
         </div>
             <script type="module" src="/main.js"></script>
 	</body>

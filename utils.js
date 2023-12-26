@@ -17,4 +17,38 @@ export function torusCoordsToCartesian(
     return [x, y, z]
 }
 
+/**
+ * Take a break
+ * @param {number} t time to sleep in ms
+ * @returns 
+ */
 export async function sleep(t) {return new Promise(r => setTimeout(r, t))}
+
+/**
+ * Round all numeric values in an object to the specified number of decimal places
+ * @param {object} obj 
+ * @param {number} digits 
+ */
+export function roundObject(obj, digits) {
+    console.log(obj)
+    for (let key in obj) {
+        if (typeof obj[key] === 'number') {
+            obj[key] = obj[key].toFixed(digits)
+        }
+    }
+    return obj;
+}
+
+/**
+ * Scales up coordinate from "regular" coordinates to canvas-friendly coordinates. Flips y-axis, multiplies width and height. Takes both the canvas width and height to be 2pi
+ * @param {*} canvas_width 
+ * @param {*} canvas_height 
+ * @param {*} x 
+ * @param {*} y 
+ */
+export function regularizeCoordinate(canvas_width, canvas_height, x, y) {
+    return [
+        (x/(2*Math.PI))*canvas_width,
+        (1-y/(2*Math.PI))*canvas_height
+    ]
+}
