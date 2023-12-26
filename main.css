@@ -9,6 +9,18 @@ body {
 	overscroll-behavior: none;
 }
 
+h1 {
+	text-align: center;
+	font-size: 1.8em;
+}
+
+a {
+	color: #a29eff
+}
+
+a:visited {
+	color: #a29eff
+}
 
 a:hover {
 	text-decoration: underline;
@@ -40,6 +52,9 @@ a, button, input, select {
 #options-panel {
 	bottom: 0;
 	right: 0;
+	max-width: 25vw;
+	height: 50vh;
+	overflow-y: scroll;
 }
 
 .info-label {
@@ -52,10 +67,16 @@ button {
 	border-radius: 0.5em;
 	color: gray;
 	width: fit-content;
-	height: 2.5em;
+	/* height: 2em; */
 	display: grid;
 	place-items: center;
 	padding: 0.25em;
+	font-size: 1.2em;
+}
+
+#draw-trajectory {
+	height: 3em;
+	width: 12em;
 	font-size: 1.2em;
 }
 
@@ -123,7 +144,12 @@ input[type="checkbox"] {
 	height: 50%;
 }
 
+
 /* .ivp {
 	display: flex;
 	width: 100%;
 } */
+
+.description {
+	word-wrap: break-word;
+}

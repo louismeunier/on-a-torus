@@ -129,11 +129,31 @@ function init() {
         showPoints = e.target.checked;
     })
 
+    // ? draw initial condition
+    const [x0, y0, z0] = torusCoordsToCartesian(ai, bi, TORUS_CENTRAL_RADIUS, TORUS_TUBE_RADIUS)
+    const initSphere = new THREE.Mesh( 
+        new THREE.SphereGeometry( .7, 32, 16 ),
+        new THREE.MeshBasicMaterial({ color: "red" })
+    );
+    initSphere.position.set(x0, y0, z0);
+    scene.add( initSphere );
+
+    // on square map as well
+    initialValueSquareMap();
+
     document.getElementById("ivp-1").addEventListener("change", e => {
         ai = parseFloat(e.target.value);
+        const [x0, y0, z0] = torusCoordsToCartesian(ai, bi, TORUS_CENTRAL_RADIUS, TORUS_TUBE_RADIUS);
+        initSphere.position.set(x0, y0, z0);
+        clearSquareMap();
+        initialValueSquareMap();
     })
     document.getElementById("ivp-2").addEventListener("change", e => {
         bi = parseFloat(e.target.value);
+        const [x0, y0, z0] = torusCoordsToCartesian(ai, bi, TORUS_CENTRAL_RADIUS, TORUS_TUBE_RADIUS);
+        initSphere.position.set(x0, y0, z0);
+        clearSquareMap();
+        initialValueSquareMap();
     })
 
     // TODO: change all this to work more generally for arbitrary arguments
@@ -230,13 +250,12 @@ async function drawTorusTrajectory() {
 
         // Initial condition
         let [a0,b0] = [ai, bi];
-        const [x0, y0, z0] = torusCoordsToCartesian(a0, b0, TORUS_CENTRAL_RADIUS, TORUS_TUBE_RADIUS)
+        // TODO: keep this plotted always
+        // TODO: easiest would probably be to just not add it to the spheres array so it doesn't get deleted. Would then have to chnage it whenever initials change
+        const [x0, y0, z0] = torusCoordsToCartesian(ai, bi, TORUS_CENTRAL_RADIUS, TORUS_TUBE_RADIUS)
         points.push(new THREE.Vector3(x0, y0, z0))
         let [an, bn] = [a0, b0];
-        const initSphere = new THREE.Mesh( pointGeometry, pointMaterial('red') );
-        initSphere.position.set(x0, y0, z0);
-        scene.add( initSphere );
-        spheres.push( initSphere );
+        // spheres.push( initSphere );
 
         for (let i = 0; i < trajectoryDistance; i++) {
             // Function Definition (make changeable)
@@ -273,7 +292,7 @@ async function drawTorusTrajectory() {
             b0 = bn;
              // ! Stop once the system loops back on itself (sketchy)
              console.log(distanceThreeD(x, y, z, x0, y0, z0))
-             if (distanceThreeD(x, y, z, x0, y0, z0) < 60*trajectoryGrain) {
+             if (distanceThreeD(x, y, z, x0, y0, z0) < 50*trajectoryGrain) {
                  lockPanel(false)
                  trajectoryDrawn = true;
                  document.getElementById("draw-trajectory").innerText = "╳ Clear Trajectory"
@@ -339,6 +358,18 @@ function clearSquareMap() {
     const canvas = document.getElementById("square-map");
     const ctx = canvas.getContext("2d");
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // initialValueSquareMap();
+}
+
+function initialValueSquareMap() {
+    const canvas = document.getElementById("square-map");
+    const ctx = canvas.getContext("2d");
+    const [ai_reg, bi_reg] = regularizeCoordinate(canvas.width, canvas.height, ai, bi);
+    ctx.fillStyle="red";
+    ctx.strokeStyle="red";
+    ctx.fillRect(ai_reg-1, bi_reg-1, 4, 2);
+    ctx.stroke();
+    ctx.strokeStyle="black";
 }
 
 function onWindowResize() {
