@@ -1,6 +1,8 @@
 # Flows on a Torus
 
-# Sources 
+Visualizations of 2D systems on a torus. Built with [three.js](https://github.com/mrdoob/three.js/).
+
+## Sources 
 
 - [Torus Knot](https://en.wikipedia.org/wiki/Torus_knot)
 - [Linear Flow on the Torus](https://en.wikipedia.org/wiki/Linear_flow_on_the_torus)
