@@ -116,6 +116,14 @@ button {
 	right: 0;
 	position: absolute;
 	display: flex;
+	flex-direction: row;
+	margin-top: 1em;
+	margin-right: 1em;
+	gap: 1em;
+}
+
+.square-map-container div {
+	display: flex;
 	flex-direction: column;
 	align-items: center;
 }
@@ -126,8 +134,19 @@ button {
 	opacity: 0.7;
 	height: 15vw;
 	width: 15vw;
-	margin-top: 1em;
-	margin-right: 1em;
+}
+
+#poincare-map {
+	border: 1px dashed #808080;
+	height: 15vw;
+	width: 15vw;
+	/* border: 2px solid gray; */
+	background-color: rgba(255, 0, 0, 0.1);
+	transition: 0.2s ease-in-out;
+}
+
+.flash {
+	background-color: rgba(255, 0, 0, 0.2)!important;
 }
 
 input[type="range"] {
@@ -156,6 +175,8 @@ input[type="checkbox"] {
 	word-wrap: break-word;
 }
 
-#source-code {
-
+#status-panel {
+	position: absolute;
+	top: 0;
+	left: 0;
 }

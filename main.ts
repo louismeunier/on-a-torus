@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { torusCoordsToCartesian, sleep, roundObject, regularizeCoordinate, lockPanel } from './utils';
-
+// @ts-ignore
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { distanceThreeD, linspace, torus_function } from './mathing';
 
@@ -9,6 +9,7 @@ import { distanceThreeD, linspace, torus_function } from './mathing';
 
 
 let camera, scene, renderer, stats;
+let poincareSection;
 
 // ! Options
 let trajectoryDrawn = false;
@@ -19,16 +20,16 @@ let trajectoryGrain = 0.05;
 
 let showAxes = false;
 let showPoints = true;
-let [ai, bi] = [Math.PI, Math.PI]
+let [ai, bi] = [0, 0]
 
-
+const poincare:number[] = [];
 let p = 2,
 q = 3;
 
 
-const spheres = [],
-    points = [],
-    lines = [];
+const spheres:THREE.Object3D[] = [],
+    points:THREE.Vector3[] = [],
+    lines:THREE.Object3D[] = [];
 
 const TORUS_CENTRAL_RADIUS = 45,
     TORUS_TUBE_RADIUS = 20;
@@ -40,7 +41,7 @@ const OPTIONS = {
     "knot": ([an, bn], ...args) =>  [args[0], args[1]],
     "quasi": ([an, bn], ...args) => [args[0], args[1]],
     "coupled": ([an, bn], ...args) => [args[0] + args[2]*Math.sin(bn - an), args[1] + args[3]*Math.sin(an - bn)],
-    "forced": ([an, bn], ...args) => [bn, 0.5 - Math.sin(an)]
+    "forced": ([an, bn], ...args) => [1, 0.5 - 0.4*Math.sin(an)]
 }
 
 let selectedOption = "knot";
@@ -53,7 +54,7 @@ function init() {
     scene = new THREE.Scene();
 
     camera = new THREE.PerspectiveCamera( 100, window.innerWidth / window.innerHeight, 1, 1000 );
-    camera.position.set( 0, -80, 70 );
+    camera.position.set( 0, -100, 80 );
 
 
     let torusObject;
@@ -99,33 +100,34 @@ function init() {
     // ? init canvas
     initCanvas();
 
-    // TODO add axes and such
+    poincareSection = poincareSectionSetup();
+    poincareMapSetup();
 
     // ? init listeners
-    document.getElementById("opacity").addEventListener("input", e => {
-        torusObject.material.opacity = e.target.value
+    document.getElementById("opacity")!.addEventListener("input", e => {
+        torusObject.material.opacity = e.currentTarget.value
     })
-    document.getElementById("toggle-mesh").addEventListener("click", e => {
+    document.getElementById("toggle-mesh")!.addEventListener("click", e => {
         torusObject.material.wireframe=!torusObject.material.wireframe
     })
 
-    document.getElementById("toggle-axes").addEventListener("click", e => {
+    document.getElementById("toggle-axes")!.addEventListener("click", e => {
         showAxes = !showAxes;
        !showAxes ? scene.remove(axesHelper): scene.add(axesHelper)
     })
 
-    document.getElementById("draw-trajectory").addEventListener("click", drawTorusTrajectory)
-    document.getElementById("trajectory-distance").addEventListener("input", e => {
+    document.getElementById("draw-trajectory")!.addEventListener("click", drawTorusTrajectory)
+    document.getElementById("trajectory-distance")!.addEventListener("input", e => {
         trajectoryDistance = e.target.value;
-        document.getElementById("trajectory-distance-lab").innerText = `Distance (${trajectoryDistance})`;
+        document.getElementById("trajectory-distance-lab")!.innerText = `Distance (${trajectoryDistance})`;
     })
 
-    document.getElementById("trajectory-grain").addEventListener("input", e => {
+    document.getElementById("trajectory-grain")!.addEventListener("input", e => {
         trajectoryGrain = e.target.value;
-        document.getElementById("trajectory-grain-lab").innerText = `Grain (${trajectoryGrain})`;
+        document.getElementById("trajectory-grain-lab")!.innerText = `Grain (${trajectoryGrain})`;
     })
 
-    document.getElementById("show-points").addEventListener("change", e => {
+    document.getElementById("show-points")!.addEventListener("change", e => {
         showPoints = e.target.checked;
     })
 
@@ -138,36 +140,54 @@ function init() {
     initSphere.position.set(x0, y0, z0);
     scene.add( initSphere );
 
-    document.getElementById("ivp-1").addEventListener("input", e => {
+    document.getElementById("ivp-1")!.addEventListener("input", e => {
         ai = parseFloat(e.target.value);
         const [x0, y0, z0] = torusCoordsToCartesian(ai, bi, TORUS_CENTRAL_RADIUS, TORUS_TUBE_RADIUS);
         initSphere.position.set(x0, y0, z0);
+        // TODO: clear out poincare map points
+        scene.remove(poincareSection);
+        poincareSection = poincareSectionSetup();
+        poincareMapSetup();
         clearSquareMap();
         initialValueSquareMap();
     })
-    document.getElementById("ivp-2").addEventListener("input", e => {
+    document.getElementById("ivp-2")!.addEventListener("input", e => {
         bi = parseFloat(e.target.value);
         const [x0, y0, z0] = torusCoordsToCartesian(ai, bi, TORUS_CENTRAL_RADIUS, TORUS_TUBE_RADIUS);
         initSphere.position.set(x0, y0, z0);
+        // TODO: clear out poincare map points
+        scene.remove(poincareSection);
+        poincareSection = poincareSectionSetup();
+        poincareMapSetup();
         clearSquareMap();
         initialValueSquareMap();
     })
 
+    document.getElementById("poincare-toggle")?.addEventListener("click", e => {
+        const html = document.getElementById("poincare-container");
+        if (html?.style.display == "none") {
+            html.style.display = "flex";
+            poincareSection= poincareSectionSetup();
+        } else {
+            html.style.display = "none";
+            scene.remove(poincareSection);
+        }
+    })
     // TODO: change all this to work more generally for arbitrary arguments
     // TODO: probably easiest to just have a big array of arguments rather than individually named ones; just listen to all inputs in each parameter panel
-    document.getElementById("p").addEventListener("input", e => {
+    document.getElementById("p")!.addEventListener("input", e => {
         p = e.target.value;
-        document.getElementById("p-lab").innerText = `p (${p})`
+        document.getElementById("p-lab")!.innerText = `p (${p})`
         points.length=0;
     })
-    document.getElementById("q").addEventListener("input", e => {
+    document.getElementById("q")!.addEventListener("input", e => {
         q = e.target.value;
-        document.getElementById("q-lab").innerText = `q (${q})`
+        document.getElementById("q-lab")!.innerText = `q (${q})`
         points.length=0;
     })
 
     // !
-    document.getElementById("option-select").addEventListener("change", e => {
+    document.getElementById("option-select")!.addEventListener("change", e => {
         console.log(e.target.value)
         selectedOption = e.target.value;
 
@@ -181,13 +201,13 @@ function init() {
     })
 }
 
-function initListeners() {
-    const options = document.querySelectorAll(".parameters-panel input")
-}
+// function initListeners() {
+//     const options = document.querySelectorAll(".parameters-panel input")
+// }
 
 function initCanvas() {
-    const canvas = document.getElementById("square-map");
-    const ctx = canvas.getContext("2d");
+    const canvas = document.getElementById("square-map") as HTMLCanvasElement;
+    const ctx = canvas.getContext("2d")!;
     ctx.beginPath();
     canvas_arrow(ctx, 0, canvas.height/2, 0, canvas.height/2-0.1)
     ctx.stroke()
@@ -205,7 +225,72 @@ function initCanvas() {
     initialValueSquareMap();
 }
 
-var cylinderMesh = function( pointX, pointY )
+
+function poincareSectionSetup() {
+    const [x, y, z] = torusCoordsToCartesian(ai, bi, TORUS_CENTRAL_RADIUS, TORUS_TUBE_RADIUS);
+    const geometry = new THREE.BoxGeometry( TORUS_TUBE_RADIUS + 20, 1, TORUS_TUBE_RADIUS + 20); 
+    const material = new THREE.MeshBasicMaterial( {color: "red", opacity: 0.85, transparent: true}); 
+    const cube = new THREE.Mesh( geometry, material );
+    scene.add( cube );
+    cube.position.set(
+        TORUS_CENTRAL_RADIUS*Math.cos(ai),
+        TORUS_CENTRAL_RADIUS*Math.sin(ai),
+        0
+    );
+    cube.rotation.set(0, 0, ai)
+    return cube;
+}
+
+function poincareMapSetup() {
+    const canvas = document.getElementById("poincare-map");
+    const ctx = canvas.getContext("2d");
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "gray"
+    ctx.strokeStyle = "gray"
+    ctx.beginPath();
+    ctx.moveTo(0, canvas.height)
+    ctx.lineTo(canvas.width, 0);
+    ctx.stroke();
+    poincare.length = 0;
+    poincare.push(bi);
+}
+
+async function addToSection(point) {
+    poincare.push(point);
+    const canvas = document.getElementById("poincare-map") as HTMLCanvasElement;
+    const ctx = canvas.getContext("2d")!;
+    const [x0, y0] = regularizeCoordinate(canvas.width, canvas.height, poincare[poincare.length - 2], poincare[poincare.length - 2])
+    const [xn, yn] = regularizeCoordinate(canvas.width, canvas.height, poincare[poincare.length - 1],poincare[poincare.length - 1])
+    const [x, y] = regularizeCoordinate(canvas.width, canvas.height, poincare[poincare.length - 2], poincare[poincare.length - 1])
+
+    canvas.classList.add("flash")
+    
+    ctx.fillStyle="black";
+    ctx.strokeStyle="black";
+    ctx.beginPath();
+    ctx.fillRect(x0,yn, 4, 2);
+    ctx.stroke();
+
+    ctx.fillStyle="gray"
+    ctx.strokeStyle="gray";
+    ctx.beginPath()
+    ctx.moveTo(x0, y0)
+    ctx.lineTo(x0, yn)
+    ctx.stroke()
+
+    ctx.beginPath()
+    ctx.moveTo(x0, yn)
+    ctx.lineTo(xn, yn)
+    ctx.stroke()
+
+    await sleep(300)
+    canvas.classList.remove("flash")
+    // ctx.beginPath()
+    // ctx.fillRect(20+10*Math.cos(point),20+10*Math.sin(point), 4, 2)
+    // ctx.stroke();
+}
+
+function cylinderMesh( pointX, pointY )
 {
     /* edge from X to Y */
     var direction = new THREE.Vector3().subVectors( pointY, pointX );
@@ -244,7 +329,7 @@ async function drawTorusTrajectory() {
         clearSquareMap();
         initCanvas();
         // initialValueSquareMap();
-        document.getElementById("draw-trajectory").innerText = "꩜ Draw Trajectory";
+        document.getElementById("draw-trajectory")!.innerText = "꩜ Draw Trajectory";
         return;
     }
 
@@ -264,7 +349,7 @@ async function drawTorusTrajectory() {
         lines.length = 0;
         spheres.length = 0;
 
-        document.getElementById("draw-trajectory").innerText = "꩜ Drawing Trajectory"
+        document.getElementById("draw-trajectory")!.innerText = "꩜ Drawing Trajectory"
 
         // Initial condition
         let [a0,b0] = [ai, bi];
@@ -284,7 +369,7 @@ async function drawTorusTrajectory() {
             // bn = bn+q*0.01
             // an = an+0.01*Math.sin(bn-an)
             // bn = bn+0.01*Math.sin(an-bn)
-            const [diff_an, diff_bn] = OPTIONS[selectedOption]([a0, b0], p, q);
+            const [diff_an, diff_bn] = OPTIONS[selectedOption]([a0, b0], p, q, 5);
             [an, bn] = [trajectoryGrain*diff_an+a0, trajectoryGrain*diff_bn+b0]
             // an = an+Math.E*trajectoryGrain
             // bn = bn+2*trajectoryGrain
@@ -302,24 +387,29 @@ async function drawTorusTrajectory() {
 
             drawSquareMap(a0%(2*Math.PI), b0%(2*Math.PI), an%(2*Math.PI), bn%(2*Math.PI))
 
-            const lineMesh = cylinderMesh(...points.slice(-2))
+            const lineMesh = cylinderMesh(points[points.length - 2], points[points.length - 1])
             scene.add(lineMesh)
             lines.push(lineMesh)
-
+            if ((an%(2*Math.PI)-a0%(2*Math.PI))<0) {
+                console.log((bn%(2*Math.PI))/(2*Math.PI))
+                addToSection((bn%(2*Math.PI)))
+            }
+            // TODO: add "status" (current coordinate, etc) as window to screen
             a0 = an;
             b0 = bn;
+            
              // ! Stop once the system loops back on itself (sketchy)
-             console.log(distanceThreeD(x, y, z, x0, y0, z0))
-             if (distanceThreeD(x, y, z, x0, y0, z0) < 50*trajectoryGrain) {
-                 lockPanel(false)
-                 trajectoryDrawn = true;
-                 document.getElementById("draw-trajectory").innerText = "╳ Clear Trajectory"
-                 return
-             }
+            //  console.log(distanceThreeD(x, y, z, x0, y0, z0))
+            //  if (distanceThreeD(x, y, z, x0, y0, z0) < 50*trajectoryGrain) {
+            //      lockPanel(false)
+            //      trajectoryDrawn = true;
+            //      document.getElementById("draw-trajectory")!.innerText = "╳ Clear Trajectory"
+            //      return
+            //  }
             await sleep(SLEEP_TIME);
         }
         trajectoryDrawn = true;
-        document.getElementById("draw-trajectory").innerText = "╳ Clear Trajectory";
+        document.getElementById("draw-trajectory")!.innerText = "╳ Clear Trajectory";
         console.log("Cartesian Coordinates (x, y, z)")
         console.table({
             "initial": roundObject(points[0], 2), 
@@ -363,8 +453,8 @@ function canvas_arrow(context, fromx, fromy, tox, toy) {
 
 // ? Square map
 function drawSquareMap(a0, b0, a1, b1) {
-    const canvas = document.getElementById("square-map");
-    const ctx = canvas.getContext("2d");
+    const canvas = document.getElementById("square-map") as HTMLCanvasElement;
+    const ctx = canvas.getContext("2d")!;
     // ctx.rect(a0_reg, b0_reg, 1, 1);
     if ((a1-a0) > 0 && (b1-b0) > 0) {
         const [a0_reg, b0_reg] = regularizeCoordinate(canvas.width, canvas.height, a0, b0);
@@ -376,15 +466,15 @@ function drawSquareMap(a0, b0, a1, b1) {
     }   
 }
 function clearSquareMap() {
-    const canvas = document.getElementById("square-map");
-    const ctx = canvas.getContext("2d");
+    const canvas = document.getElementById("square-map") as HTMLCanvasElement;
+    const ctx = canvas.getContext("2d")!;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     // initialValueSquareMap();
 }
 
 function initialValueSquareMap() {
-    const canvas = document.getElementById("square-map");
-    const ctx = canvas.getContext("2d");
+    const canvas = document.getElementById("square-map") as HTMLCanvasElement;
+    const ctx = canvas.getContext("2d")!;
     const [ai_reg, bi_reg] = regularizeCoordinate(canvas.width, canvas.height, ai, bi);
     ctx.fillStyle="red";
     ctx.strokeStyle="red";

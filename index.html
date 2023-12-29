@@ -8,8 +8,14 @@
 	</head>
 	<body>
 		<div class="square-map-container">
-			<canvas id="square-map"></canvas>
-			<i class="info-label" title='Consider this as an "unwrapping" of the surface of the torus; trajectories can flow off the edge, to come back in appropriate location on the other side. More aptly, consider this as modding the value of each coordinate by 2π.'>Unit Square Map</i>
+			<div id="poincare-container">
+				<canvas id="poincare-map"></canvas>
+				<i class="info-label" title="Value of the tubular angle every 2π rotation of the central angle; ie, whenever the trajectory passes the Poincaré section denoted on the torus in red. It tracks at the initial value.">Poincaré Map</i>
+			</div>
+			<div>
+				<canvas id="square-map"></canvas>
+				<i class="info-label" title='Consider this as an "unwrapping" of the surface of the torus; trajectories can flow off the edge, to come back in appropriate location on the other side. More aptly, consider this as modding the value of each coordinate by 2π.'>Unit Square Map</i>
+			</div>
 		</div>
 		<!-- Control panel, changes dynamically with different options -->
         <div id = "control-panel" class="primary-panel">
@@ -23,6 +29,9 @@
 				<button id="toggle-axes" >
 					ヿ Toggle Axes
 				</button>
+			</div>
+			<div class="together">
+				<button id="poincare-toggle">✂︎ Toggle Poincaré Section</button>
 			</div>
 			
 			<hr class="sub-div"/>
@@ -41,8 +50,8 @@
 			</div>
 			<div class="sub-panel">
 				<div class="ivp">
-					<span>$\theta_1(0)=$</span><input id="ivp-1" type="number" min="0" max="6.26" step="0.01" value="3.14">
-					<span>$\theta_2(0)$</span><input id="ivp-2" type="number" min="0" max="6.26" step="0.01" value="3.14">
+					<span>$\theta_1(0)=$</span><input id="ivp-1" type="number" min="0" max="6.26" step="0.01" value="0">
+					<span>$\theta_2(0)$</span><input id="ivp-2" type="number" min="0" max="6.26" step="0.01" value="0">
 				</div>
 				<span for="ivp">Initial</span>
 			</div>
@@ -52,6 +61,7 @@
 			<div class="knot-pp parameters-panel">
 				<div class="sub-panel">
 					<input class="knot-parameter" id="p" type="range" name="p" min="0" max="20" step=".1" value="2">
+					<!-- <div><input type="checkbox" name="irrational"><label for="irrational">irrational?</label></div> -->
 					<label for="p" id="p-lab">p (2)</label>
 				</div>
 				<div class="sub-panel">
@@ -134,7 +144,10 @@
 		</div>
 		</div>
         </div>
-            <script type="module" src="/main.js"></script>
+		<div id="status-panel">
+
+		</div>
+            <script type="module" src="/main.ts"></script>
 	</body>
 	<script>
 		MathJax = {
