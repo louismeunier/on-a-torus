@@ -1,8 +1,9 @@
 import * as THREE from 'three';
 import { torusCoordsToCartesian, sleep, roundObject, regularizeCoordinate, lockPanel } from './utils';
+import { distanceThreeD, linspace, torus_function } from './mathing';
 // @ts-ignore
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { distanceThreeD, linspace, torus_function } from './mathing';
+
 
 
 // import Stats from 'three/addons/libs/stats.module.js';
@@ -20,6 +21,7 @@ let trajectoryGrain = 0.05;
 
 let showAxes = false;
 let showPoints = true;
+let autoStop = false;
 let [ai, bi] = [0, 0]
 
 const poincare:number[] = [];
@@ -129,6 +131,10 @@ function init() {
 
     document.getElementById("show-points")!.addEventListener("change", e => {
         showPoints = e.target.checked;
+    })
+
+    document.getElementById("auto-stop")?.addEventListener("input", e => {
+        autoStop = e.target.checked;
     })
 
     // ? draw initial condition
@@ -400,12 +406,12 @@ async function drawTorusTrajectory() {
             
              // ! Stop once the system loops back on itself (sketchy)
             //  console.log(distanceThreeD(x, y, z, x0, y0, z0))
-            //  if (distanceThreeD(x, y, z, x0, y0, z0) < 50*trajectoryGrain) {
-            //      lockPanel(false)
-            //      trajectoryDrawn = true;
-            //      document.getElementById("draw-trajectory")!.innerText = "╳ Clear Trajectory"
-            //      return
-            //  }
+             if (autoStop && distanceThreeD(x, y, z, x0, y0, z0) < 50*trajectoryGrain) {
+                 lockPanel(false)
+                 trajectoryDrawn = true;
+                 document.getElementById("draw-trajectory")!.innerText = "╳ Clear Trajectory"
+                 return
+             }
             await sleep(SLEEP_TIME);
         }
         trajectoryDrawn = true;

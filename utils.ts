@@ -1,3 +1,5 @@
+import { Vector3 } from "three";
+
 /**
  * Converts (theta_1, theta_2) of a torus to (x, y, z)
  * @param {number} theta_1 Central angle 
@@ -6,10 +8,10 @@
  * @param {number} radius_t Tube radius of torus
  */
 export function torusCoordsToCartesian(
-    theta_1,
-    theta_2,
-    radius_c,
-    radius_t
+    theta_1: number,
+    theta_2: number,
+    radius_c: number,
+    radius_t: number
 ) {
     const x = (radius_c + radius_t*Math.cos(theta_2))*Math.cos(theta_1)
     const y = (radius_c + radius_t*Math.cos(theta_2))*Math.sin(theta_1)
@@ -22,14 +24,14 @@ export function torusCoordsToCartesian(
  * @param {number} t time to sleep in ms
  * @returns 
  */
-export async function sleep(t) {return new Promise(r => setTimeout(r, t))}
+export async function sleep(t: number | undefined) {return new Promise(r => setTimeout(r, t))}
 
 /**
  * Round all numeric values in an object to the specified number of decimal places
  * @param {object} obj 
  * @param {number} digits 
  */
-export function roundObject(obj, digits) {
+export function roundObject(obj: number[] | Vector3, digits: number) {
     console.log(obj)
     for (let key in obj) {
         if (typeof obj[key] === 'number') {
@@ -46,7 +48,7 @@ export function roundObject(obj, digits) {
  * @param {*} x 
  * @param {*} y 
  */
-export function regularizeCoordinate(canvas_width, canvas_height, x, y) {
+export function regularizeCoordinate(canvas_width: number, canvas_height: number, x: number, y: number) {
     return [
         (x/(2*Math.PI))*canvas_width,
         (1-y/(2*Math.PI))*canvas_height
@@ -58,14 +60,15 @@ export function regularizeCoordinate(canvas_width, canvas_height, x, y) {
  * Lock/unlock inputs
  * @param {boolean} lock 
  */
-export function lockPanel(lock) {
-    document.getElementById("draw-trajectory").disabled = lock;
-    document.getElementById("q").disabled = lock;
-    document.getElementById("p").disabled = lock;
-    document.getElementById("trajectory-distance").disabled = lock;
-    document.getElementById("trajectory-grain").disabled = lock;
-    document.getElementById("option-select").disabled = lock;
-    document.getElementById("show-points").disabled = lock;
-    document.getElementById("ivp-1").disabled = lock;
-    document.getElementById("ivp-2").disabled = lock;
+export function lockPanel(lock: boolean) {
+    document.getElementById("draw-trajectory")!.disabled = lock;
+    document.getElementById("q")!.disabled = lock;
+    document.getElementById("p")!.disabled = lock;
+    document.getElementById("trajectory-distance")!.disabled = lock;
+    document.getElementById("trajectory-grain")!.disabled = lock;
+    document.getElementById("option-select")!.disabled = lock;
+    document.getElementById("show-points")!.disabled = lock;
+    document.getElementById("ivp-1")!.disabled = lock;
+    document.getElementById("ivp-2")!.disabled = lock;
+    document.getElementById("auto-stop")!.disabled = lock;
 }
